@@ -48,7 +48,7 @@ def get_capsule_positions(mic_array_name):
     Parameters
     ----------
     mic_array_name : str
-      One of: 'eigenmike', 'ambeo'
+      One of: 'eigenmike', 'ambeo', 'h3-vr'
 
     Returns
     -------
@@ -61,26 +61,33 @@ def get_capsule_positions(mic_array_name):
 
     """
 
-    _validate_string('mic_array_name', mic_array_name, choices=['eigenmike', 'ambeo'])
+    _validate_string('mic_array_name', mic_array_name, choices=['eigenmike', 'ambeo', 'h3-vr'])
     capsule_positions = None
-
-    if mic_array_name is 'eigenmike':
-        mic_dirs_deg = np.array([[0, 32, 0, 328, 0, 45, 69, 45, 0, 315, 291, 315, 91, 90, 90, 89, 180, 212, 180, 148,
-                                  180, 225, 249, 225, 180, 135, 111, 135, 269, 270, 270, 271],
-                                 [21, 0, -21, 0, 58, 35, 0, -35, -58, -35, 0, 35, 69, 32, -31, -69, 21, 0, -21, 0, 58,
-                                  35, 0, -35, -58, -35, 0, 35, 69, 32, -32, -69]])
+    radii = {
+        'eigenmike' : 0.042,
+        'ambeo' : 0.015,
+        'h3-vr' : 0.012
+    }
+    r = radii[mic_array_name]
+    
+    if mic_array_name == 'eigenmike':
+        mic_dirs_deg = np.array([
+            [0, 32, 0, 328, 0, 45, 69, 45, 0, 315, 291, 315, 91, 90, 90, 89, 180, 212, 
+                180, 148,180, 225, 249, 225, 180, 135, 111, 135, 269, 270, 270, 271],
+            [21, 0, -21, 0, 58, 35, 0, -35, -58, -35, 0, 35, 69, 32, -31, -69, 21, 0, 
+                -21, 0, 58, 35, 0, -35, -58, -35, 0, 35, 69, 32, -32, -69]
+        ])
         mic_dirs_rad = mic_dirs_deg * np.pi / 180.
-        r = 0.042
         mic_dirs_rad = np.row_stack((mic_dirs_rad, r*np.ones(np.shape(mic_dirs_rad)[1])))
-
         capsule_positions = mic_dirs_rad.T
 
-    elif mic_array_name is 'ambeo':
-        r = 0.015
-        capsule_positions = [[np.pi / 4, np.arcsin(1. / np.sqrt(3)), r],           # FLU
-                             [7 * np.pi / 4, -1 * np.arcsin(1. / np.sqrt(3)), r],  # FRD
-                             [3 * np.pi / 4, -1 * np.arcsin(1. / np.sqrt(3)), r],  # BLD
-                             [5 * np.pi / 4, np.arcsin(1. / np.sqrt(3)), r]]       # BRU
+    elif mic_array_name in ['ambeo', 'h3-vr']:        
+        capsule_positions = np.array([
+            [1 * np.pi / 4,      np.arcsin(1. / np.sqrt(3)), r],  # FLU
+            [7 * np.pi / 4, -1 * np.arcsin(1. / np.sqrt(3)), r],  # FRD
+            [3 * np.pi / 4, -1 * np.arcsin(1. / np.sqrt(3)), r],  # BLD
+            [5 * np.pi / 4,      np.arcsin(1. / np.sqrt(3)), r]   # BRU
+        ])
 
     return capsule_positions
 
@@ -378,11 +385,11 @@ def get_sh(N, dirs, basisType):
         """
         return np.power(-1, np.abs(m)) * np.sqrt(2 - delta_kronecker(0, np.abs(m)))
 
-    if basisType is 'complex':
+    if basisType == 'complex':
         # TODO
         raise NotImplementedError
 
-    elif basisType is 'real':
+    elif basisType == 'real':
         harm_idx = 0
         for l in range(N + 1):
             for m in range(-l,0):
