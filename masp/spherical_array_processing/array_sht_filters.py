@@ -170,7 +170,7 @@ def array_sht_filters_theory_softLim(R, nMic, order_sht, Lfilt, fs, amp_threshol
     amplification. The limiting follows the approach of
 
         Bernschutz, B., Porschmann, C., Spors, S., Weinzierl, S., Versterkung, B., 2011.
-        Soft-limiting der modalen amplitudenverst?rkung bei sph?rischen mikrofonarrays im plane wave decomposition verfahren.
+        Soft-Limiting der modalen Amplitudenverstärkung bei sphärischen Mikrofonarrays im Plane Wave Decomposition Verfahren.
         Proceedings of the 37. Deutsche Jahrestagung fur Akustik (DAGA 2011)
 
     """
